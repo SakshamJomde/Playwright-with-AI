@@ -1,0 +1,28 @@
+{
+  "name": "qa-ai-ideas",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:naukri": "npx playwright test --project=naukri --headed"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "QA + AI brainstorm workspace — Playwright + TypeScript + Claude",
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.91.1",
+    "@playwright/cli": "^0.1.9",
+    "@playwright/test": "^1.59.1",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^25.6.0",
+    "js-yaml": "^4.1.1",
+    "playwright": "^1.59.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}
