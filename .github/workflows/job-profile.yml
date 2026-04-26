@@ -1,4 +1,4 @@
-name: Job Profile Update
+name: Naukri Profile Update
 
 on:
   schedule:
@@ -23,19 +23,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Chrome
-        run: npx playwright install chrome --with-deps
-
-      - name: Install Xvfb (headed mode for bot bypass)
-        run: sudo apt-get install -y xvfb
+      - name: Install Chromium
+        run: npx playwright install chromium --with-deps
 
       - name: Run profile update
-        run: xvfb-run --auto-servernum npx playwright test --project=naukri
+        run: npx playwright test --project=naukri
         env:
           CI: true
           BASE_NAUKRI_URL: ${{ secrets.BASE_NAUKRI_URL }}
-          NAUKRI_USERNAME: ${{ secrets.NAUKRI_USERNAME }}
-          NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
+          NAUKRI_AUTH_STATE: ${{ secrets.NAUKRI_AUTH_STATE }}
 
       - name: Upload report on failure
         if: failure()
