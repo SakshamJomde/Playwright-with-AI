@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎭 qa-ai-ideas
+# 🎭 Playwright-with-AI
 
 **AI-powered test authoring and self-healing test infrastructure**
 
