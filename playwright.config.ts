@@ -29,16 +29,9 @@ export default defineConfig({
       testIgnore: '**/naukri/**',
     },
     {
-      name: 'mobile',
-      use: { ...devices['Pixel 5'] },
-      testIgnore: '**/naukri/**',
-    },
-    {
       name: 'naukri',
       use: {
         ...devices['Desktop Chrome'],
-        channel: 'chrome',           // real Chrome — bypasses Akamai bot detection
-        headless: false,
         baseURL: process.env.BASE_NAUKRI_URL ?? 'https://www.naukri.com',
       },
       testMatch: '**/naukri/**',
