@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment variables — never commit
+.env
+.env.local
+.env.*.local
+
+# Playwright
+playwright-report/
+test-results/
+blob-report/
+
+# playwright-cli sessions
+.playwright-cli/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
