@@ -26,15 +26,6 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-      testIgnore: '**/naukri/**',
-    },
-    {
-      name: 'naukri',
-      use: {
-        ...devices['Desktop Chrome'],
-        baseURL: process.env.BASE_NAUKRI_URL ?? 'https://www.naukri.com',
-      },
-      testMatch: '**/naukri/**',
     },
   ],
 });
