@@ -10,10 +10,19 @@ const AUTH_STATE_B64 = process.env.NAUKRI_AUTH_STATE ?? '';
 const AUTH_FILE = path.resolve('auth-state.json');
 
 async function prepareAuthState(): Promise<string | undefined> {
-  // CI: decode base64 secret → write temp file → use as storageState
+  // CI: decode base64 secret → strip IP-bound short-lived token → write temp file
   if (AUTH_STATE_B64) {
     const decoded = Buffer.from(AUTH_STATE_B64, 'base64');
-    await fs.writeFile(AUTH_FILE, decoded);
+    const state = JSON.parse(decoded.toString()) as {
+      cookies: Array<{ name: string }>;
+      origins: unknown[];
+    };
+
+    // nauk_at is a JWT tied to the original IP and expires in 1 hour.
+    // Removing it forces Naukri to issue a fresh one via nauk_rt (UUID, no IP binding).
+    state.cookies = state.cookies.filter(c => !['nauk_at', 'is_login'].includes(c.name));
+
+    await fs.writeFile(AUTH_FILE, JSON.stringify(state));
     console.log('[Auth] Using saved session from NAUKRI_AUTH_STATE secret');
     return AUTH_FILE;
   }
@@ -42,8 +51,19 @@ export class NaukriProfilePage {
   constructor(readonly page: Page) {}
 
   async goto() {
+    // Hit homepage first — Naukri uses nauk_rt here to issue a fresh nauk_at for this IP
+    await this.page.goto(`${BASE}`);
+    await this.page.waitForLoadState('domcontentloaded');
+
     await this.page.goto(`${BASE}/mnjuser/profile`);
-    await this.page.getByText(/Profile last updated/i).waitFor({ timeout: 15_000 });
+
+    // Detect login redirect early with a clear error
+    const url = this.page.url();
+    if (url.includes('nlogin') || url.includes('login')) {
+      throw new Error(`[Auth] Session rejected — redirected to login (${url}). Re-run npm run auth:save and update NAUKRI_AUTH_STATE secret.`);
+    }
+
+    await this.page.getByText(/Profile last updated/i).waitFor({ timeout: 20_000 });
   }
 
   get headlineEditBtn() {
