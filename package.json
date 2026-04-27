@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "npx playwright test",
-    "test:naukri": "npx playwright test --project=naukri --headed"
+    "test:naukri": "npx playwright test --project=naukri --headed",
+    "auth:save": "tsx scripts/save-auth.ts"
   },
   "keywords": [],
   "author": "",
