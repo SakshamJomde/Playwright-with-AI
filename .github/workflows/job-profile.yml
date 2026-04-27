@@ -1,4 +1,4 @@
-name: Naukri Profile Update
+name: Job Profile Update
 
 on:
   schedule:
