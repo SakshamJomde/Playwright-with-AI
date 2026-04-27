@@ -1,9 +1,11 @@
 name: Job Profile Update
 
 on:
+  push:
+    branches: [main, master]
   schedule:
     - cron: '0 6-21 * * *'   # every hour, 7am–9pm every day (~630 mins/month, free tier safe)
-  workflow_dispatch:        # manual trigger from GitHub UI
+  workflow_dispatch:          # manual trigger from GitHub UI
 
 jobs:
   update-profile:
