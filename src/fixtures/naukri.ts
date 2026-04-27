@@ -51,16 +51,26 @@ export class NaukriProfilePage {
   constructor(readonly page: Page) {}
 
   async goto() {
-    // Hit homepage first — Naukri uses nauk_rt here to issue a fresh nauk_at for this IP
+    // Homepage first — let Naukri refresh nauk_at via nauk_rt for the CI IP
     await this.page.goto(`${BASE}`);
     await this.page.waitForLoadState('domcontentloaded');
+    console.log(`[Nav] Homepage: ${this.page.url()} — title: "${await this.page.title()}"`);
 
     await this.page.goto(`${BASE}/mnjuser/profile`);
+    await this.page.waitForLoadState('domcontentloaded');
 
-    // Detect login redirect early with a clear error
     const url = this.page.url();
+    const title = await this.page.title();
+    console.log(`[Nav] Profile: ${url} — title: "${title}"`);
+
     if (url.includes('nlogin') || url.includes('login')) {
-      throw new Error(`[Auth] Session rejected — redirected to login (${url}). Re-run npm run auth:save and update NAUKRI_AUTH_STATE secret.`);
+      throw new Error(`[Auth] Redirected to login: ${url}. Re-run npm run auth:save and update NAUKRI_AUTH_STATE secret.`);
+    }
+
+    // Detect Akamai/bot challenge served at the profile URL (no redirect)
+    const bodySnippet = await this.page.locator('body').innerText({ timeout: 5_000 }).catch(() => '');
+    if (/access denied|bot|challenge|captcha|blocked/i.test(bodySnippet)) {
+      throw new Error(`[Auth] Bot protection detected on profile page (title: "${title}"). Body: ${bodySnippet.substring(0, 300)}`);
     }
 
     await this.page.getByText(/Profile last updated/i).waitFor({ timeout: 20_000 });
